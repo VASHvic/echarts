@@ -1,0 +1,67 @@
+Hola,
+
+
+
+Vos passe les notes de la reunió de huí :
+
+
+
+1) Metrovalencia -> portal web : Dades Ocupació de trens diari + Alguna cosa més (Emanuel)
+
+2) Contenidors de fem amb sensors (cada 6h - 300 sensors) -> Widget informació (Vicent)
+
+3) Sensors de soroll (1 min - 30 sensors) -> Widget informació (Víctor)
+
+
+
+
+
+Projecte:
+
+1) Planificació: dies + horari
+
+Llista tasques + Duració estimada
+
+2) Tasques
+
+Llistat de requisits (Funcionals (Comportament de l'aplicació) / No funcionals (Git, Llenguatges, Pagina carregue en menys de 5 segs))
+
+Diseny alt nivell (IMPORTANT) -> Blocks (Diagrama de fluxe) -> Components tècnics (Págines web, bases dades, programes, servidors)
+
+                (Primer pas) POrtal web dades trens
+
+                On guarde??
+
+                Transformar-la??
+
+                Visualitzar-la?
+
+                (Darrer pas) Usuari interactuant
+
+PROGRAMACIÓ -> Blocks (Backend / Frontend / BBDD)
+
+Testing -> Enllaçat amb els requists
+
+Desplegament -> VPS
+
+    
+
+
+
+WEB Destino:
+
+    https://www.valencia.es/web/valenciaalminut
+
+    
+
+Librería gráficos:
+
+    https://echarts.apache.org
+
+    https://developers.google.com/chart
+
+
+
+
+
+I adjunte el PPT amb el high level flow diagram.
