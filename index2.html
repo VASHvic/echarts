@@ -4,13 +4,31 @@
 <head>
   <meta charset="utf-8">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       height: 100vh;
       width: 100vw;
-      margin: 0;
+      background-color: #FFCD00;
+      /************* temporal************/
       display: flex;
+      justify-content: center;
+      align-items: flex-end;
     }
 
+
+    #parent {
+      height: 70vh;
+      width: 97vw;
+      display: flex;
+      background-color: white;
+      margin-bottom: 1%;
+
+    }
 
     #container1 {
       height: 100%;
@@ -25,8 +43,12 @@
 </head>
 
 <body>
-  <div id="container1"></div>
-  <div id="container2"></div>
+  <h1></h1>
+  <article id="parent">
+    <div id="container1"></div>
+    <div id="container2"></div>
+  </article>
+
 
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.3.2/dist/echarts.min.js"></script>
   <script src="index2.js"></script>
