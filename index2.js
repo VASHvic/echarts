@@ -31,38 +31,9 @@ function updateData() {
       },
     ],
   });
-  chart.setOption({
-    series: [
-      {
-        detail: {
-          fontSize: autoFontSize(),
-        },
-        data: [
-          {
-            value: 100,
-          },
-        ],
-      },
-      {
-        detail: {
-          fontSize: autoFontSize() / 1.4,
-        },
-        data: [
-          {
-            value: 1,
-          },
-        ],
-      },
-    ],
-  });
 }
 
 const gauge1 = {
-  title: '',
-  laeq: 0,
-  la90: 0,
-};
-const gauge2 = {
   title: '',
   laeq: 0,
   la90: 0,
@@ -223,138 +194,6 @@ if (option && typeof option === 'object') {
   chart1.setOption(option);
 }
 
-let chart2 = echarts.init(document.getElementById('container2'));
-let app2 = {};
-let option2;
-
-option2 = {
-  title: {
-    text: 'Nivells mínims(LA Min) i màxims(LA Max)',
-    top: '2%',
-    left: '20%',
-  },
-  series: [
-    {
-      type: 'gauge',
-      center: ['50%', '60%'],
-      startAngle: 200,
-      endAngle: -20,
-      min: 0,
-      max: 115,
-      splitNumber: 10,
-      itemStyle: {
-        color: '#FFAB91',
-      },
-      progress: {
-        show: true,
-        width: 30,
-        overlap: false,
-      },
-      pointer: {
-        show: false,
-      },
-      axisLine: {
-        lineStyle: {
-          width: 30,
-        },
-      },
-      axisTick: {
-        distance: -45,
-        splitNumber: 5,
-        lineStyle: {
-          width: 2,
-          color: '#999',
-        },
-      },
-      splitLine: {
-        distance: -52,
-        length: 14,
-        lineStyle: {
-          width: 3,
-          color: '#999',
-        },
-      },
-      axisLabel: {
-        distance: -25,
-
-        color: '#999',
-        fontSize: 20,
-      },
-      anchor: {
-        show: false,
-      },
-      title: {
-        show: false,
-      },
-      detail: {
-        valueAnimation: true,
-        width: '60%',
-        lineHeight: 40,
-        borderRadius: 8,
-        offsetCenter: [0, '10%'],
-        fontSize: autoFontSize(),
-        fontWeight: 'bolder',
-        formatter: '{value} dB LAMax',
-        color: 'auto',
-      },
-      data: [
-        {
-          value: 85,
-        },
-      ],
-    },
-    {
-      type: 'gauge',
-      center: ['50%', '60%'],
-      startAngle: 200,
-      endAngle: -20,
-      min: 0,
-      max: 115,
-      itemStyle: {
-        color: 'brown',
-      },
-      progress: {
-        show: true,
-        width: 12,
-      },
-      pointer: {
-        show: false,
-      },
-      axisLine: {
-        show: false,
-      },
-      axisTick: {
-        show: false,
-      },
-      splitLine: {
-        show: false,
-      },
-      axisLabel: {
-        show: false,
-      },
-      detail: {
-        valueAnimation: true,
-        width: '60%',
-        lineHeight: 40,
-        borderRadius: 8,
-        offsetCenter: [0, '-10%'],
-        fontSize: autoFontSize() / 1.4,
-        fontWeight: 'bolder',
-        formatter: '{value} dB LAMin',
-        color: 'auto',
-      },
-      data: [
-        {
-          value: 40,
-        },
-      ],
-    },
-  ],
-};
-if (option2 && typeof option2 === 'object') {
-  chart2.setOption(option2);
-}
-
 window.onresize = function () {
   let resizing = false;
 
@@ -372,22 +211,8 @@ window.onresize = function () {
       },
     ],
   });
-  chart2.setOption({
-    series: [
-      {
-        detail: {
-          fontSize: autoFontSize(),
-        },
-      },
-      {
-        detail: {
-          fontSize: autoFontSize() / 1.4,
-        },
-      },
-    ],
-  });
+
   chart1.resize();
-  chart2.resize();
   if (resizing === false) {
     resizing = true;
     setTimeout(() => {
