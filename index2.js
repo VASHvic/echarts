@@ -1,13 +1,13 @@
 function autoFontSize() {
   let width = document.getElementById('container1').offsetWidth;
   let height = document.getElementById('container1').offsetHeight;
-  let newFontSize = Math.round((width + height) / 2 / 16);
+  let newFontSize = Math.round((width + height) / 2 / 30);
   return newFontSize;
 }
 
-function updateData() {
-  a.style.backgroundColor = 'red';
+function updateData({title, laeq, lae90, data}) {
   chart1.setOption({
+    title: {text: `${title}\n ${data}`},
     series: [
       {
         detail: {
@@ -15,30 +15,23 @@ function updateData() {
         },
         data: [
           {
-            value: 100,
+            value: Math.floor(lae90),
           },
         ],
       },
       {
         detail: {
-          fontSize: autoFontSize() / 1.4,
+          fontSize: autoFontSize() / 1.3,
         },
         data: [
           {
-            value: 1,
+            value: Math.floor(laeq),
           },
         ],
       },
     ],
   });
 }
-
-const gauge1 = {
-  title: '',
-  laeq: 0,
-  la90: 0,
-};
-
 fetch('https://sensors-soroll-api.herokuapp.com/get/4')
   .then((d) => d.json())
   .then((j) => {
@@ -58,7 +51,7 @@ fetch('https://sensors-soroll-api.herokuapp.com/get/4')
     }).format(infoDate);
     const laeq = info.LAeq.value;
     const la90 = info.LA90.value;
-    console.log(info.LAeq.value);
+    updateData({title: nomCarrer, laeq: laeq, lae90: la90, data: dataMedicio});
   });
 let chart1 = echarts.init(document.getElementById('container1'));
 let app = {};
@@ -66,7 +59,7 @@ let option;
 option = {
   title: {
     // text: `${nomCarrer}\n ${dataMedicio}`,
-    text: gauge1.title,
+    text: '',
     top: '2%',
     left: '5%',
   },
@@ -135,8 +128,7 @@ option = {
       },
       data: [
         {
-          // value: Math.floor(la90),
-          value: gauge1.la90,
+          value: 0,
         },
       ],
     },
@@ -175,15 +167,14 @@ option = {
         lineHeight: 40,
         borderRadius: 8,
         offsetCenter: [0, '-10%'],
-        fontSize: autoFontSize() / 1.4,
+        fontSize: autoFontSize() / 1.3,
         fontWeight: 'bolder',
         formatter: '{value} dB LAeq',
         color: 'auto',
       },
       data: [
         {
-          // value: Math.floor(laeq),
-          value: gauge1.laeq,
+          value: 0,
         },
       ],
     },
@@ -206,7 +197,7 @@ window.onresize = function () {
       },
       {
         detail: {
-          fontSize: autoFontSize() / 1.4,
+          fontSize: autoFontSize() / 1.3,
         },
       },
     ],
@@ -217,7 +208,6 @@ window.onresize = function () {
     resizing = true;
     setTimeout(() => {
       chart1.resize();
-      chart2.resize();
       resizing = false;
     }, 10);
   }

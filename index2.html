@@ -14,36 +14,29 @@
       height: 100vh;
       width: 100vw;
       background-color: #FFCD00;
-      /************* temporal************/
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
+      position: relative;
     }
 
 
     #parent {
-      height: 70vh;
+      height: 75vh;
       width: 97vw;
-      display: flex;
       background-color: white;
-      margin-bottom: 1%;
-
+      /* margin-bottom: 1%; */
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 30%);
     }
 
     #container1 {
       height: 100%;
       width: 100%;
-    }
 
-    #container2 {
-      height: 100%;
-      width: 100%;
     }
   </style>
 </head>
 
 <body>
-  <h1></h1>
   <article id="parent">
     <div id="container1"></div>
   </article>
