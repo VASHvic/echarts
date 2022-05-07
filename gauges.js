@@ -1,67 +1,38 @@
-function autoFontSize() {
-  let width = document.getElementById('container1').offsetWidth;
-  let height = document.getElementById('container1').offsetHeight;
-  let newFontSize = Math.round((width + height) / 2 / 30);
-  return newFontSize;
-}
+// ! NoiseLevelObserved-HOPVLCi8 y NoiseLevelObserved-HOPVLCi18 son el amteix carrer
+// ! ordenar alfabeticament?
+let gaugeDisplayed = 0;
+const gauges = [];
 
-function updateData({title, laeq, lae90, data}) {
-  chart1.setOption({
-    title: {text: `${title}\n ${data}`},
-    series: [
-      {
-        detail: {
-          fontSize: autoFontSize(),
-        },
-        data: [
-          {
-            value: Math.floor(lae90),
-          },
-        ],
-      },
-      {
-        detail: {
-          fontSize: autoFontSize() / 1.3,
-        },
-        data: [
-          {
-            value: Math.floor(laeq),
-          },
-        ],
-      },
-    ],
-  });
-}
-fetch('https://sensors-soroll-api.herokuapp.com/get/4')
+fetch('https://sensors-soroll-api.herokuapp.com/getall/last')
   .then((d) => d.json())
-  .then((j) => {
-    const {data} = j;
-    const [info] = data;
-    const infoCarrer = info?.name?.value;
-    const [numSensor, nomCarrer] = infoCarrer.split('-');
-    const rawDataMedicio = info.LAeq.metadata.TimeInstant.value;
-    const infoDate = new Date(rawDataMedicio);
-    const dataMedicio = new Intl.DateTimeFormat('cat-ES', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-    }).format(infoDate);
-    const laeq = info.LAeq.value;
-    const la90 = info.LA90.value;
-    updateData({title: nomCarrer, laeq: laeq, lae90: la90, data: dataMedicio});
+  .then((infoArray) => {
+    infoArray.forEach((g, i) => {
+      const nomCarrer = g.doc.data.address.value;
+      const rawDataMedicio = g.doc.data.dateObservedTo.value;
+      const dataMedicio = new Date(rawDataMedicio);
+      const fecha = new Intl.DateTimeFormat('cat-ES', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+      }).format(dataMedicio);
+      const laeq = g.doc.data.LAeq.value;
+      const lae90 = g.doc.data.LA90.value;
+      gauges.push(new Gauge({title: nomCarrer, fecha, laeq: laeq, lae90: lae90}));
+    });
+    updateData(gauges);
   });
 let chart1 = echarts.init(document.getElementById('container1'));
 let app = {};
 let option;
 option = {
+  //TODO: Borrar al final si no fa falta
   title: {
-    // text: `${nomCarrer}\n ${dataMedicio}`,
     text: '',
-    top: '2%',
-    left: '5%',
+    top: '0%',
+    left: '0%',
   },
   series: [
     {
@@ -212,3 +183,54 @@ window.onresize = function () {
     }, 10);
   }
 };
+
+const container = document.querySelector('#parent');
+container.addEventListener('click', () => {
+  ++gaugeDisplayed;
+  if (gaugeDisplayed > gauges.length) gaugeDisplayed = 0;
+  updateData(gauges, gaugeDisplayed);
+});
+
+class Gauge {
+  constructor({title, fecha, laeq, lae90}) {
+    this.title = title;
+    this.fecha = fecha;
+    this.laeq = laeq;
+    this.lae90 = lae90;
+  }
+}
+
+function autoFontSize() {
+  let width = document.getElementById('container1').offsetWidth;
+  let height = document.getElementById('container1').offsetHeight;
+  let newFontSize = Math.round((width + height) / 50);
+  return newFontSize;
+}
+function updateData(gaugeArray, i = 0) {
+  console.log(i);
+  chart1.setOption({
+    title: {text: `${gaugeArray[i].title}\nÚltima medició: ${gaugeArray[i].fecha}`},
+    series: [
+      {
+        detail: {
+          fontSize: autoFontSize(),
+        },
+        data: [
+          {
+            value: Math.floor(gaugeArray[i].lae90) ?? '??',
+          },
+        ],
+      },
+      {
+        detail: {
+          fontSize: autoFontSize() / 1.3,
+        },
+        data: [
+          {
+            value: Math.floor(gaugeArray[i].laeq),
+          },
+        ],
+      },
+    ],
+  });
+}
