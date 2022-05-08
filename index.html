@@ -3,14 +3,50 @@
 
 <head>
   <meta charset="utf-8">
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.3.2/dist/echarts.min.js"></script>
-  <script src="/index.js" defer></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      width: 100vw;
+      background-color: #FFCD00;
+      position: relative;
+    }
+
+
+    #parent {
+      height: 75vh;
+      width: 97vw;
+      background-color: white;
+      /* margin-bottom: 1%; */
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 30%);
+    }
+
+    #container1 {
+      height: 100%;
+      width: 100%;
+
+    }
+  </style>
 </head>
 
-
 <body style="height: 100%; margin: 0">
-  <div id="container" style="height: 100%"></div>
+  <div id="parent">
+    <div id="container" style="height: 100%"></div>
+  </div>
+
+
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.3.2/dist/echarts.min.js"></script>
+  <script src="index.js"></script>
+
 </body>
 
 </html>
