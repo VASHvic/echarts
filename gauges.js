@@ -1,4 +1,3 @@
-// ! NoiseLevelObserved-HOPVLCi8 y NoiseLevelObserved-HOPVLCi18 son el amteix carrer
 // ! ordenar alfabeticament?
 let gaugeDisplayed = 0;
 const gauges = [];
@@ -6,7 +5,7 @@ const gauges = [];
 fetch('https://sensors-soroll-api.herokuapp.com/getall/last')
   .then((d) => d.json())
   .then((infoArray) => {
-    infoArray.forEach((g, i) => {
+    infoArray.forEach((g) => {
       const nomCarrer = g.doc.data.address.value;
       const rawDataMedicio = g.doc.data.dateObservedTo.value;
       const dataMedicio = new Date(rawDataMedicio);
