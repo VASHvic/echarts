@@ -77,19 +77,19 @@ option = {
       axisLabel: {
         distance: -25,
         color: '#999',
-        fontSize: 20,
+        fontSize: 15,
       },
-      anchor: {
-        show: false,
-      },
-      title: {
-        show: false,
-      },
+      // anchor: {
+      //   show: false,
+      // },
+      // title: {
+      //   show: false,
+      // },
       detail: {
         valueAnimation: true,
-        width: '60%',
-        lineHeight: 40,
-        borderRadius: 8,
+        // width: '60%',
+        // lineHeight: 40,
+        // borderRadius: 8,
         offsetCenter: [0, '10%'],
         fontSize: autoFontSize(),
         fontWeight: 'bolder',
@@ -133,9 +133,9 @@ option = {
       },
       detail: {
         valueAnimation: true,
-        width: '60%',
-        lineHeight: 40,
-        borderRadius: 8,
+        // width: '60%',
+        // lineHeight: 40,
+        // borderRadius: 8,
         offsetCenter: [0, '-10%'],
         fontSize: autoFontSize() / 1.3,
         fontWeight: 'bolder',
@@ -183,7 +183,7 @@ window.onresize = function () {
   }
 };
 
-const container = document.querySelector('#parent');
+const container = document.querySelector('#pointer');
 container.addEventListener('click', () => {
   ++gaugeDisplayed;
   if (gaugeDisplayed > gauges.length) gaugeDisplayed = 0;

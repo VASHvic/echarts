@@ -33,10 +33,54 @@
       width: 100%;
 
     }
+
+    #titol {
+      position: absolute;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      left: 1%;
+      top: 3%;
+
+    }
+
+    #titol2 {
+      position: absolute;
+      font-size: 1.5rem;
+      right: 1%;
+      top: 8%;
+      display: flex;
+      align-items: center;
+    }
+
+    #titol2 p {
+      margin-right: 1rem;
+    }
+
+    #titol p {
+      margin-left: 1rem;
+    }
+
+    #pointer {
+      border-radius: 50%;
+    }
+
+    .logo {
+      height: 4rem;
+      width: 4rem;
+    }
   </style>
 </head>
 
 <body style="height: 100%; margin: 0">
+  <div id="titol">
+    <img class="logo" src="./logo.png" alt="">
+    <p>INFORMACIÓ SOBRE CONTAMINACIÓ ACÚSTICA</p>
+  </div>
+  <div id="titol2">
+    <p>Mostrar més</p>
+    <img class="logo" id="pointer" src="./pointer.jpg" alt="">
+  </div>
   <div id="parent">
     <div id="container" style="height: 100%"></div>
   </div>

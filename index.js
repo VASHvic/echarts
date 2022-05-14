@@ -1,61 +1,26 @@
-//TODO: Mostrar el nom del carrer i posar la info dalt de tot
-//mirar per qué no ordena
+let app = {};
+let option;
 let urls = [];
-let sensors;
 let baseSearch = `https://sensors-soroll-api.herokuapp.com/getall/`;
 let urlDisplayed = 0;
 let dataArray = [];
-
+let nomCarrer = '';
 // Get all posible ids on page load and push the search api route to an array
 fetch('https://sensors-soroll-api.herokuapp.com/getallids')
   .then((d) => d.json())
   .then((sensorIds) => {
-    urls = sensorIds.map((s) => baseSearch + s.replace('NoiseLevelObserved-HOPVLCi', ''));
-    // .sort((a, b) => a - b);
-    //construct the data needed for the graph with the first element of the url array
-    console.log(urls[urlDisplayed]);
-
-    fetch(urls[urlDisplayed])
-      .then((d) => d.json())
-      .then((d) => {
-        d.forEach((messura) => {
-          let [{LAeq}] = messura.data;
-          //push data of messure and value to the array [[d,v], [d,v]....]
-          dataArray.push([
-            LAeq.metadata.TimeInstant.value,
-            Math.round(LAeq.value).toString(),
-          ]);
-        });
-        // feed the graph with data
-        graph.setOption(
-          (option = {
-            xAxis: {
-              data: dataArray.map(function (item) {
-                date = new Date(item[0]);
-                return (
-                  date.toLocaleDateString('es-ES') +
-                  ' ' +
-                  date.toLocaleTimeString('es-ES')
-                );
-              }),
-            },
-            series: {
-              data: dataArray.map((item) => item[1]),
-            },
-          })
-        );
-      });
+    const ids = sensorIds
+      .map((s) => +s.replace('NoiseLevelObserved-HOPVLCi', ''))
+      .sort((a, b) => a - b);
+    urls = ids.map((id) => baseSearch + id);
+    updateData();
   });
 
 // initialize the graph before having data
-let app = {};
-let option;
-
 var graph = echarts.init(document.getElementById('container'));
-
 option = {
   title: {
-    text: '',
+    text: nomCarrer,
     left: '1%',
   },
   tooltip: {
@@ -68,11 +33,14 @@ option = {
   },
   xAxis: {
     data: dataArray.map(function (item) {
-      date = new Date();
+      date = new Date(item.metadata.TimeInstant.value);
       return date.toLocaleDateString('es-ES') + ' ' + date.toLocaleTimeString('es-ES');
     }),
   },
-  yAxis: {},
+  yAxis: {
+    // type: 'value',
+    min: 45,
+  },
   toolbox: {
     show: true,
     right: 10,
@@ -122,11 +90,11 @@ option = {
     },
   },
   series: {
-    name: 'Valencia Leq',
+    name: '',
     type: 'line',
     data: dataArray,
     markLine: {
-      silent: true,
+      // silent: true,
       lineStyle: {
         color: '#333',
       },
@@ -149,7 +117,7 @@ if (option && typeof option === 'object') {
   graph.setOption(option);
 }
 
-const container = document.querySelector('#parent');
+const container = document.querySelector('#pointer');
 container.addEventListener('click', () => {
   ++urlDisplayed;
   if (urlDisplayed > urls.length - 1) urlDisplayed = 0;
@@ -158,42 +126,39 @@ container.addEventListener('click', () => {
 });
 
 window.onresize = function () {
+  // resize the canvas, setTimeour added because the original function bugs sometimes
   let resizing = false;
-
   graph.resize();
   if (resizing === false) {
     resizing = true;
     setTimeout(() => {
       graph.resize();
       resizing = false;
-    }, 10);
+    }, 100);
   }
 };
 function updateData() {
-  dataArray = [];
   fetch(urls[urlDisplayed])
     .then((d) => d.json())
     .then((d) => {
-      d.forEach((messura) => {
-        let [{LAeq}] = messura.data;
-        dataArray.push([
-          LAeq.metadata.TimeInstant.value,
-          Math.round(LAeq.value).toString(),
-        ]);
-      });
-
+      nomCarrer = d[0].data[0].address.value;
+      dataArray = d.map((info) => info.data[0].LAeq);
       graph.setOption(
         (option = {
+          title: {
+            text: nomCarrer,
+            left: '1%',
+          },
           xAxis: {
             data: dataArray.map(function (item) {
-              date = new Date(item[0]);
+              date = new Date(item.metadata.TimeInstant.value);
               return (
                 date.toLocaleDateString('es-ES') + ' ' + date.toLocaleTimeString('es-ES')
               );
             }),
           },
           series: {
-            data: dataArray.map((item) => item[1]),
+            data: dataArray.map((item) => Math.floor(item.value)),
           },
         })
       );
