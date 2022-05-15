@@ -5,6 +5,7 @@ let baseSearch = `https://sensors-soroll-api.herokuapp.com/getall/`;
 let urlDisplayed = 0;
 let dataArray = [];
 let nomCarrer = '';
+const infoPointer = document.getElementById('logo-info');
 // Get all posible ids on page load and push the search api route to an array
 fetch('https://sensors-soroll-api.herokuapp.com/getallids')
   .then((d) => d.json())
@@ -32,14 +33,10 @@ option = {
     bottom: '10%',
   },
   xAxis: {
-    data: dataArray.map(function (item) {
-      date = new Date(item.metadata.TimeInstant.value);
-      return date.toLocaleDateString('es-ES') + ' ' + date.toLocaleTimeString('es-ES');
-    }),
+    data: [],
   },
   yAxis: {
-    // type: 'value',
-    min: 45,
+    min: 35,
   },
   toolbox: {
     show: true,
@@ -94,7 +91,6 @@ option = {
     type: 'line',
     data: dataArray,
     markLine: {
-      // silent: true,
       lineStyle: {
         color: '#333',
       },
@@ -118,7 +114,8 @@ if (option && typeof option === 'object') {
 }
 
 const container = document.querySelector('#pointer');
-container.addEventListener('click', () => {
+container.addEventListener('click', (e) => {
+  infoPointer.innerText = 'Carregant noves dades';
   ++urlDisplayed;
   if (urlDisplayed > urls.length - 1) urlDisplayed = 0;
   console.log(urls[urlDisplayed]);
@@ -162,5 +159,6 @@ function updateData() {
           },
         })
       );
+      infoPointer.innerText = 'Mostrar més';
     });
 }

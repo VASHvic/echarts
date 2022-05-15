@@ -75,7 +75,7 @@ option = {
         },
       },
       axisLabel: {
-        distance: -25,
+        distance: -15,
         color: '#999',
         fontSize: 15,
       },
@@ -132,10 +132,6 @@ option = {
         show: false,
       },
       detail: {
-        valueAnimation: true,
-        // width: '60%',
-        // lineHeight: 40,
-        // borderRadius: 8,
         offsetCenter: [0, '-10%'],
         fontSize: autoFontSize() / 1.3,
         fontWeight: 'bolder',
@@ -159,6 +155,11 @@ window.onresize = function () {
   let resizing = false;
 
   chart1.setOption({
+    title: {
+      textStyle: {
+        fontSize: autoFontSize() / 1.9,
+      },
+    },
     series: [
       {
         detail: {
@@ -186,7 +187,7 @@ window.onresize = function () {
 const container = document.querySelector('#pointer');
 container.addEventListener('click', () => {
   ++gaugeDisplayed;
-  if (gaugeDisplayed > gauges.length) gaugeDisplayed = 0;
+  if (gaugeDisplayed > gauges.length - 1) gaugeDisplayed = 0;
   updateData(gauges, gaugeDisplayed);
 });
 
@@ -208,7 +209,12 @@ function autoFontSize() {
 function updateData(gaugeArray, i = 0) {
   console.log(i);
   chart1.setOption({
-    title: {text: `${gaugeArray[i].title}\nÚltima medició: ${gaugeArray[i].fecha}`},
+    title: {
+      text: `${gaugeArray[i].title}\nÚltima medició: ${gaugeArray[i].fecha}`,
+      textStyle: {
+        fontSize: autoFontSize() / 1.9,
+      },
+    },
     series: [
       {
         detail: {
