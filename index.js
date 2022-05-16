@@ -138,6 +138,7 @@ function updateData() {
   fetch(urls[urlDisplayed])
     .then((d) => d.json())
     .then((d) => {
+      console.log(d);
       nomCarrer = d[0].data[0].address.value;
       dataArray = d.map((info) => info.data[0].LAeq);
       graph.setOption(

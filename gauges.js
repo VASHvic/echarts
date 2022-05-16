@@ -6,8 +6,8 @@ fetch('https://sensors-soroll-api.herokuapp.com/getall/last')
   .then((d) => d.json())
   .then((infoArray) => {
     infoArray.forEach((g) => {
-      const nomCarrer = g.doc.data.address.value;
-      const rawDataMedicio = g.doc.data.dateObservedTo.value;
+      const nomCarrer = g.address.value;
+      const rawDataMedicio = g.LAeq.metadata.TimeInstant.value;
       const dataMedicio = new Date(rawDataMedicio);
       const fecha = new Intl.DateTimeFormat('cat-ES', {
         weekday: 'long',
@@ -17,8 +17,8 @@ fetch('https://sensors-soroll-api.herokuapp.com/getall/last')
         hour: 'numeric',
         minute: 'numeric',
       }).format(dataMedicio);
-      const laeq = g.doc.data.LAeq.value;
-      const lae90 = g.doc.data.LA90.value;
+      const laeq = g.LAeq.value;
+      const lae90 = g.LA90.value;
       gauges.push(new Gauge({title: nomCarrer, fecha, laeq: laeq, lae90: lae90}));
     });
     updateData(gauges);
