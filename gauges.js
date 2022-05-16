@@ -1,4 +1,3 @@
-// ! ordenar alfabeticament?
 let gaugeDisplayed = 0;
 const gauges = [];
 
@@ -203,16 +202,17 @@ class Gauge {
 function autoFontSize() {
   let width = document.getElementById('container1').offsetWidth;
   let height = document.getElementById('container1').offsetHeight;
-  let newFontSize = Math.round((width + height) / 50);
+  if (width > 1200) width = 1000;
+  let newFontSize = Math.round((width + height) / 40);
   return newFontSize;
 }
 function updateData(gaugeArray, i = 0) {
   console.log(i);
   chart1.setOption({
     title: {
-      text: `${gaugeArray[i].title}\nÚltima medició: ${gaugeArray[i].fecha}`,
+      text: `${gaugeArray[i].title}\n${gaugeArray[i].fecha}`,
       textStyle: {
-        fontSize: autoFontSize() / 1.9,
+        fontSize: autoFontSize() / 1.7,
       },
     },
     series: [
