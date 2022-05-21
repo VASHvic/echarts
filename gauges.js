@@ -20,13 +20,13 @@ fetch('https://sensors-soroll-api.herokuapp.com/getall/last')
       const lae90 = g.LA90.value;
       gauges.push(new Gauge({title: nomCarrer, fecha, laeq: laeq, lae90: lae90}));
     });
-    updateData(gauges);
+    console.log(gauges);
+    updateGaugeData(gauges);
   });
-let chart1 = echarts.init(document.getElementById('container1'));
-let app = {};
-let option;
-option = {
-  //TODO: Borrar al final si no fa falta
+// let app = {};
+let chart2 = echarts.init(document.getElementById('container2'));
+let option2;
+option2 = {
   title: {
     text: '',
     top: '0%',
@@ -146,14 +146,14 @@ option = {
   ],
 };
 
-if (option && typeof option === 'object') {
-  chart1.setOption(option);
+if (option2 && typeof option2 === 'object') {
+  chart2.setOption(option2);
 }
 
 window.onresize = function () {
   let resizing = false;
 
-  chart1.setOption({
+  chart2.setOption({
     title: {
       textStyle: {
         fontSize: autoFontSize() / 1.9,
@@ -173,22 +173,22 @@ window.onresize = function () {
     ],
   });
 
-  chart1.resize();
+  chart2.resize();
   if (resizing === false) {
     resizing = true;
     setTimeout(() => {
-      chart1.resize();
+      chart2.resize();
       resizing = false;
     }, 10);
   }
 };
 
-const container = document.querySelector('#pointer');
-container.addEventListener('click', () => {
-  ++gaugeDisplayed;
-  if (gaugeDisplayed > gauges.length - 1) gaugeDisplayed = 0;
-  updateData(gauges, gaugeDisplayed);
-});
+// const container = document.querySelector('#pointer');
+// container.addEventListener('click', () => {
+//   ++gaugeDisplayed;
+//   if (gaugeDisplayed > gauges.length - 1) gaugeDisplayed = 0;
+//   updateGaugeData(gauges, gaugeDisplayed);
+// });
 
 class Gauge {
   constructor({title, fecha, laeq, lae90}) {
@@ -200,15 +200,14 @@ class Gauge {
 }
 
 function autoFontSize() {
-  let width = document.getElementById('container1').offsetWidth;
-  let height = document.getElementById('container1').offsetHeight;
+  let width = document.getElementById('container2').offsetWidth;
+  let height = document.getElementById('container2').offsetHeight;
   if (width > 1200) width = 1000;
   let newFontSize = Math.round((width + height) / 40);
   return newFontSize;
 }
-function updateData(gaugeArray, i = 0) {
-  console.log(i);
-  chart1.setOption({
+function updateGaugeData(gaugeArray, i = 0) {
+  chart2.setOption({
     title: {
       text: `${gaugeArray[i].title}\n${gaugeArray[i].fecha}`,
       textStyle: {

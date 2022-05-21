@@ -1,10 +1,28 @@
-let app = {};
-let option;
+let option1;
 let urls = [];
 let baseSearch = `https://sensors-soroll-api.herokuapp.com/getall/`;
 let urlDisplayed = 0;
 let dataArray = [];
 let nomCarrer = '';
+let changeView = 0;
+
+const altaveu = document.getElementById('logo-altaveu');
+const canvas1 = document.getElementById('container1');
+const canvas2 = document.getElementById('container2');
+altaveu.addEventListener('click', () => {
+  canvas1.style.display === 'block'
+    ? (canvas1.style.display = 'none')
+    : (canvas1.style.display = 'block');
+  canvas2.style.display === 'block'
+    ? (canvas2.style.display = 'none')
+    : (canvas2.style.display = 'block');
+  if (changeView === 0) {
+    const gaugeScript = document.createElement('script');
+    gaugeScript.src = 'gauges.js';
+    document.body.append(gaugeScript);
+    changeView = 1;
+  }
+});
 const infoPointer = document.getElementById('logo-info');
 // Get all posible ids on page load and push the search api route to an array
 fetch('https://sensors-soroll-api.herokuapp.com/getallids')
@@ -17,9 +35,8 @@ fetch('https://sensors-soroll-api.herokuapp.com/getallids')
     updateData();
   });
 
-// initialize the graph before having data
-var graph = echarts.init(document.getElementById('container'));
-option = {
+var graph1 = echarts.init(document.getElementById('container1'));
+option1 = {
   title: {
     text: nomCarrer,
     left: '1%',
@@ -109,8 +126,8 @@ option = {
   },
 };
 
-if (option && typeof option === 'object') {
-  graph.setOption(option);
+if (option1 && typeof option1 === 'object') {
+  graph1.setOption(option1);
 }
 
 const container = document.querySelector('#pointer');
@@ -123,13 +140,12 @@ container.addEventListener('click', (e) => {
 });
 
 window.onresize = function () {
-  // resize the canvas, setTimeour added because the original function bugs sometimes
   let resizing = false;
-  graph.resize();
+  graph1.resize();
   if (resizing === false) {
     resizing = true;
     setTimeout(() => {
-      graph.resize();
+      graph1.resize();
       resizing = false;
     }, 100);
   }
@@ -141,8 +157,8 @@ function updateData() {
       console.log(d);
       nomCarrer = d[0].data[0].address.value;
       dataArray = d.map((info) => info.data[0].LAeq);
-      graph.setOption(
-        (option = {
+      graph1.setOption(
+        (option1 = {
           title: {
             text: nomCarrer,
             left: '1%',
