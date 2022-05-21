@@ -1,14 +1,12 @@
+// import {updateGaugeData} from './functions';
+import {state, pointer, altaveu, canvas1, canvas2, infoPointer} from './state';
+
 let option1;
 let urls = [];
-let baseSearch = `https://sensors-soroll-api.herokuapp.com/getall/`;
 let urlDisplayed = 0;
 let dataArray = [];
 let nomCarrer = '';
-let changeView = 0;
 
-const altaveu = document.getElementById('logo-altaveu');
-const canvas1 = document.getElementById('container1');
-const canvas2 = document.getElementById('container2');
 altaveu.addEventListener('click', () => {
   canvas1.style.display === 'block'
     ? (canvas1.style.display = 'none')
@@ -16,23 +14,24 @@ altaveu.addEventListener('click', () => {
   canvas2.style.display === 'block'
     ? (canvas2.style.display = 'none')
     : (canvas2.style.display = 'block');
-  if (changeView === 0) {
+  canvas1.style.display === 'none' ? (state.screen = 'gauge') : (state.screen = 'graph');
+  if (!state.gaugeLoaded) {
     const gaugeScript = document.createElement('script');
     gaugeScript.src = 'gauges.js';
+    gaugeScript.type = 'module';
     document.body.append(gaugeScript);
-    changeView = 1;
+    state.gaugeLoaded = true;
   }
 });
-const infoPointer = document.getElementById('logo-info');
-// Get all posible ids on page load and push the search api route to an array
+
 fetch('https://sensors-soroll-api.herokuapp.com/getallids')
   .then((d) => d.json())
   .then((sensorIds) => {
     const ids = sensorIds
       .map((s) => +s.replace('NoiseLevelObserved-HOPVLCi', ''))
       .sort((a, b) => a - b);
-    urls = ids.map((id) => baseSearch + id);
-    updateData();
+    urls = ids.map((id) => 'https://sensors-soroll-api.herokuapp.com/getall/' + id);
+    updateGraphData();
   });
 
 var graph1 = echarts.init(document.getElementById('container1'));
@@ -130,13 +129,14 @@ if (option1 && typeof option1 === 'object') {
   graph1.setOption(option1);
 }
 
-const container = document.querySelector('#pointer');
-container.addEventListener('click', (e) => {
-  infoPointer.innerText = 'Carregant noves dades';
-  ++urlDisplayed;
-  if (urlDisplayed > urls.length - 1) urlDisplayed = 0;
-  console.log(urls[urlDisplayed]);
-  updateData();
+pointer.addEventListener('click', (e) => {
+  if (state.screen === 'graph') {
+    infoPointer.innerText = 'Carregant noves dades';
+    ++urlDisplayed;
+    if (urlDisplayed > urls.length - 1) urlDisplayed = 0;
+    console.log(urls[urlDisplayed]);
+    updateGraphData();
+  }
 });
 
 window.onresize = function () {
@@ -150,11 +150,11 @@ window.onresize = function () {
     }, 100);
   }
 };
-function updateData() {
+function updateGraphData() {
+  console.log(urls[urlDisplayed]);
   fetch(urls[urlDisplayed])
     .then((d) => d.json())
     .then((d) => {
-      console.log(d);
       nomCarrer = d[0].data[0].address.value;
       dataArray = d.map((info) => info.data[0].LAeq);
       graph1.setOption(
@@ -165,7 +165,7 @@ function updateData() {
           },
           xAxis: {
             data: dataArray.map(function (item) {
-              date = new Date(item.metadata.TimeInstant.value);
+              let date = new Date(item.metadata.TimeInstant.value);
               return (
                 date.toLocaleDateString('es-ES') + ' ' + date.toLocaleTimeString('es-ES')
               );
