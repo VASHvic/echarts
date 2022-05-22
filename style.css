@@ -21,17 +21,16 @@ body {
   height: 75vh;
   width: 97vw;
   background-color: white;
-  /* margin-bottom: 1%; */
   position: absolute;
   left: 50%;
   transform: translate(-50%, 30%);
   border-radius: 1%;
 }
 
-#container1 {
+/* .graph-container {
   height: 100%;
   width: 100%;
-}
+} */
 
 #titol {
   position: absolute;
