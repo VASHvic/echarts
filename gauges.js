@@ -1,30 +1,54 @@
-let gaugeDisplayed = 0;
-const gauges = [];
-
-fetch('https://sensors-soroll-api.herokuapp.com/getall/last')
-  .then((d) => d.json())
-  .then((infoArray) => {
-    infoArray.forEach((g) => {
-      const nomCarrer = g.address.value;
-      const rawDataMedicio = g.LAeq.metadata.TimeInstant.value;
-      const dataMedicio = new Date(rawDataMedicio);
-      const fecha = new Intl.DateTimeFormat('cat-ES', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-      }).format(dataMedicio);
-      const laeq = g.LAeq.value;
-      const lae90 = g.LA90.value;
-      gauges.push(new Gauge({title: nomCarrer, fecha, laeq: laeq, lae90: lae90}));
-    });
-    console.log(gauges);
-    updateGaugeData(gauges);
-  });
-// let app = {};
 let chart2 = echarts.init(document.getElementById('container2'));
+let gaugeDisplayed = 0;
+// const gauges = [];
+const gaugeUrls = chartUrls.map((url) => url.replace('all', 'one'));
+console.log(gaugeUrls);
+
+// fetch('https://sensors-soroll-api.herokuapp.com/getall/last')
+//   .then((d) => d.json())
+//   .then((infoArray) => {
+//     infoArray.forEach((g) => {
+//       const nomCarrer = g.address.value;
+//       const rawDataMedicio = g.LAeq.metadata.TimeInstant.value;
+//       const dataMedicio = new Date(rawDataMedicio);
+//       const fecha = new Intl.DateTimeFormat('cat-ES', {
+//         weekday: 'long',
+//         year: 'numeric',
+//         month: 'long',
+//         day: 'numeric',
+//         hour: 'numeric',
+//         minute: 'numeric',
+//       }).format(dataMedicio);
+//       const laeq = g.LAeq.value;
+//       const lae90 = g.LA90.value;
+//       gauges.push(new Gauge({title: nomCarrer, fecha, laeq: laeq, lae90: lae90}));
+//     });
+//     updateGaugeData(gauges);
+//   });
+// fetch(gaugeUrls[gaugeDisplayed])
+//   .then((d) => d.json())
+//   .then((infoArray) => {
+//     const [{data}] = infoArray;
+
+//     const nomCarrer = data[0].address.value;
+//     console.log(nomCarrer);
+//     const rawDataMedicio = data[0].LAeq.metadata.TimeInstant.value;
+//     const dataMedicio = new Date(rawDataMedicio);
+//     const fecha = new Intl.DateTimeFormat('cat-ES', {
+//       weekday: 'long',
+//       year: 'numeric',
+//       month: 'long',
+//       day: 'numeric',
+//       hour: 'numeric',
+//       minute: 'numeric',
+//     }).format(dataMedicio);
+//     const laeq = data[0].LAeq.value;
+//     const lae90 = data[0].LA90.value;
+//     // gauges.push(new Gauge({title: nomCarrer, fecha, laeq: laeq, lae90: lae90}));
+
+//     updateGaugeData(new Gauge({title: nomCarrer, fecha, laeq: laeq, lae90: lae90}));
+//   });
+getGaugeData(gaugeUrls[gaugeDisplayed]).then((gauge) => updateGaugeData(gauge));
 let option2;
 option2 = {
   title: {
@@ -183,12 +207,15 @@ window.onresize = function () {
   }
 };
 
-// const container = document.querySelector('#pointer');
-// container.addEventListener('click', () => {
-//   ++gaugeDisplayed;
-//   if (gaugeDisplayed > gauges.length - 1) gaugeDisplayed = 0;
-//   updateGaugeData(gauges, gaugeDisplayed);
-// });
+const pointer = document.querySelector('#pointer');
+pointer.addEventListener('click', () => {
+  if (document.getElementById('container2').style.display === 'block') {
+    infoPointer.innerText = 'Carregant noves dades';
+    ++gaugeDisplayed;
+    if (gaugeDisplayed > gaugeUrls.length - 1) gaugeDisplayed = 0;
+    getGaugeData(gaugeUrls[gaugeDisplayed]).then((gauge) => updateGaugeData(gauge));
+  }
+});
 
 class Gauge {
   constructor({title, fecha, laeq, lae90}) {
@@ -206,10 +233,10 @@ function autoFontSize() {
   let newFontSize = Math.round((width + height) / 40);
   return newFontSize;
 }
-function updateGaugeData(gaugeArray, i = 0) {
+function updateGaugeData(gauge) {
   chart2.setOption({
     title: {
-      text: `${gaugeArray[i].title}\n${gaugeArray[i].fecha}`,
+      text: `${gauge.title}\n${gauge.fecha}`,
       textStyle: {
         fontSize: autoFontSize() / 1.7,
       },
@@ -221,7 +248,7 @@ function updateGaugeData(gaugeArray, i = 0) {
         },
         data: [
           {
-            value: Math.floor(gaugeArray[i].lae90) ?? '??',
+            value: Math.floor(gauge.lae90) ?? '??',
           },
         ],
       },
@@ -231,10 +258,32 @@ function updateGaugeData(gaugeArray, i = 0) {
         },
         data: [
           {
-            value: Math.floor(gaugeArray[i].laeq),
+            value: Math.floor(gauge.laeq),
           },
         ],
       },
     ],
   });
+}
+async function getGaugeData(url) {
+  const response = await fetch(url);
+  const jsonData = await response.json();
+  const [{data}] = jsonData;
+  const nomCarrer = data[0].address.value;
+  console.log(nomCarrer);
+  const rawDataMedicio = data[0].LAeq.metadata.TimeInstant.value;
+  const dataMedicio = new Date(rawDataMedicio);
+  const fecha = new Intl.DateTimeFormat('cat-ES', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  }).format(dataMedicio);
+  const laeq = data[0].LAeq.value;
+  const lae90 = data[0].LA90.value;
+  // gauges.push(new Gauge({title: nomCarrer, fecha, laeq: laeq, lae90: lae90}));
+  infoPointer.innerText = 'Mostrar més';
+  return new Gauge({title: nomCarrer, fecha, laeq: laeq, lae90: lae90});
 }

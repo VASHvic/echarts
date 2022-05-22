@@ -1,14 +1,16 @@
+const altaveu = document.getElementById('logo-altaveu');
+const canvas1 = document.getElementById('container1');
+const canvas2 = document.getElementById('container2');
+const infoPointer = document.getElementById('logo-info');
+
 let option1;
-let urls = [];
+let chartUrls = [];
 let baseSearch = `https://sensors-soroll-api.herokuapp.com/getall/`;
 let urlDisplayed = 0;
 let dataArray = [];
 let nomCarrer = '';
 let changeView = 0;
 
-const altaveu = document.getElementById('logo-altaveu');
-const canvas1 = document.getElementById('container1');
-const canvas2 = document.getElementById('container2');
 altaveu.addEventListener('click', () => {
   canvas1.style.display === 'block'
     ? (canvas1.style.display = 'none')
@@ -23,15 +25,13 @@ altaveu.addEventListener('click', () => {
     changeView = 1;
   }
 });
-const infoPointer = document.getElementById('logo-info');
-// Get all posible ids on page load and push the search api route to an array
 fetch('https://sensors-soroll-api.herokuapp.com/getallids')
   .then((d) => d.json())
   .then((sensorIds) => {
     const ids = sensorIds
       .map((s) => +s.replace('NoiseLevelObserved-HOPVLCi', ''))
       .sort((a, b) => a - b);
-    urls = ids.map((id) => baseSearch + id);
+    chartUrls = ids.map((id) => baseSearch + id);
     updateData();
   });
 
@@ -132,11 +132,12 @@ if (option1 && typeof option1 === 'object') {
 
 const container = document.querySelector('#pointer');
 container.addEventListener('click', (e) => {
-  infoPointer.innerText = 'Carregant noves dades';
-  ++urlDisplayed;
-  if (urlDisplayed > urls.length - 1) urlDisplayed = 0;
-  console.log(urls[urlDisplayed]);
-  updateData();
+  if (canvas1.style.display === 'block') {
+    infoPointer.innerText = 'Carregant noves dades';
+    ++urlDisplayed;
+    if (urlDisplayed > chartUrls.length - 1) urlDisplayed = 0;
+    updateData();
+  }
 });
 
 window.onresize = function () {
@@ -151,10 +152,9 @@ window.onresize = function () {
   }
 };
 function updateData() {
-  fetch(urls[urlDisplayed])
+  fetch(chartUrls[urlDisplayed])
     .then((d) => d.json())
     .then((d) => {
-      console.log(d);
       nomCarrer = d[0].data[0].address.value;
       dataArray = d.map((info) => info.data[0].LAeq);
       graph1.setOption(
