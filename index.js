@@ -133,7 +133,7 @@ if (option1 && typeof option1 === 'object') {
 const container = document.querySelector('#pointer');
 container.addEventListener('click', (e) => {
   if (canvas1.style.display === 'block') {
-    infoPointer.innerText = 'Carregant noves dades';
+    infoPointer.innerText = 'Carregant noves dades...';
     ++urlDisplayed;
     if (urlDisplayed > chartUrls.length - 1) urlDisplayed = 0;
     updateData();
@@ -152,6 +152,7 @@ window.onresize = function () {
   }
 };
 function updateData() {
+  //TODO: mirar si es més rapid fer un array amb longitud fija
   fetch(chartUrls[urlDisplayed])
     .then((d) => d.json())
     .then((d) => {
