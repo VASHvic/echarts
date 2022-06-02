@@ -32,6 +32,7 @@ fetch('https://sensors-soroll-api.herokuapp.com/getallids')
       .map((s) => +s.replace('NoiseLevelObserved-HOPVLCi', ''))
       .sort((a, b) => a - b);
     chartUrls = ids.map((id) => baseSearch + id);
+
     updateData();
   });
 
@@ -152,12 +153,21 @@ window.onresize = function () {
   }
 };
 function updateData() {
-  //TODO: mirar si es més rapid fer un array amb longitud fija
+  console.time('a');
   fetch(chartUrls[urlDisplayed])
     .then((d) => d.json())
     .then((d) => {
+      console.log(d);
       nomCarrer = d[0].data[0].address.value;
-      dataArray = d.map((info) => info.data[0].LAeq);
+      // dataArray = d.map((info) => info.data[0].LAeq);
+
+      const dades = [];
+      const valors = [];
+      d.forEach((item) => {
+        let d = new Date(item.data[0].LAeq.metadata.TimeInstant.value);
+        dades.push(d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES')),
+          valors.push(Math.floor(item.data[0].LAeq.value));
+      });
       graph1.setOption(
         (option1 = {
           title: {
@@ -165,18 +175,21 @@ function updateData() {
             left: '1%',
           },
           xAxis: {
-            data: dataArray.map(function (item) {
-              date = new Date(item.metadata.TimeInstant.value);
-              return (
-                date.toLocaleDateString('es-ES') + ' ' + date.toLocaleTimeString('es-ES')
-              );
-            }),
+            // data: dataArray.map(function (item) {
+            //   date = new Date(item.metadata.TimeInstant.value);
+            //   return (
+            //     date.toLocaleDateString('es-ES') + ' ' + date.toLocaleTimeString('es-ES')
+            //   );
+            // }),
+            data: dades,
           },
           series: {
-            data: dataArray.map((item) => Math.floor(item.value)),
+            // data: dataArray.map((item) => Math.floor(item.value)),
+            data: valors,
           },
         })
       );
       infoPointer.innerText = 'Mostrar més';
     });
+  console.timeEnd('a');
 }
