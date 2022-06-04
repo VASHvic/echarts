@@ -2,6 +2,8 @@ const altaveu = document.getElementById('logo-altaveu');
 const canvas1 = document.getElementById('container1');
 const canvas2 = document.getElementById('container2');
 const infoPointer = document.getElementById('logo-info');
+const container = document.querySelector('#pointer');
+const info1 = document.querySelector('#titol1 > p');
 
 let option1;
 let chartUrls = [];
@@ -10,6 +12,15 @@ let urlDisplayed = 0;
 let dataArray = [];
 let nomCarrer = '';
 let changeView = 0;
+
+container.addEventListener('click', (e) => {
+  if (canvas1.style.display === 'block') {
+    infoPointer.innerText = 'Carregant noves dades...';
+    ++urlDisplayed;
+    if (urlDisplayed > chartUrls.length - 1) urlDisplayed = 0;
+    updateData();
+  }
+});
 
 altaveu.addEventListener('click', () => {
   canvas1.style.display === 'block'
@@ -24,7 +35,16 @@ altaveu.addEventListener('click', () => {
     document.body.append(gaugeScript);
     changeView = 1;
   }
+  if (canvas1.style.display === 'none') {
+    info1.innerText = info1.innerText.toString().replace('indicador', 'gràfica');
+    altaveu.src = './assets/graph.png';
+  }
+  if (canvas2.style.display === 'none') {
+    info1.innerText = info1.innerText.toString().replace('gràfica', 'indicador');
+    altaveu.src = './assets/gauge.png';
+  }
 });
+
 fetch('https://sensors-soroll-api.herokuapp.com/getallids')
   .then((d) => d.json())
   .then((sensorIds) => {
@@ -131,16 +151,6 @@ if (option1 && typeof option1 === 'object') {
   graph1.setOption(option1);
 }
 
-const container = document.querySelector('#pointer');
-container.addEventListener('click', (e) => {
-  if (canvas1.style.display === 'block') {
-    infoPointer.innerText = 'Carregant noves dades...';
-    ++urlDisplayed;
-    if (urlDisplayed > chartUrls.length - 1) urlDisplayed = 0;
-    updateData();
-  }
-});
-
 window.onresize = function () {
   let resizing = false;
   graph1.resize();
@@ -149,25 +159,27 @@ window.onresize = function () {
     setTimeout(() => {
       graph1.resize();
       resizing = false;
-    }, 100);
+    }, 200);
   }
 };
 function updateData() {
-  console.time('a');
+  console.time('general');
+  console.time('fetch');
   fetch(chartUrls[urlDisplayed])
     .then((d) => d.json())
     .then((d) => {
-      console.log(d);
+      console.log(d.length);
+      console.timeEnd('fetch');
       nomCarrer = d[0].data[0].address.value;
-      // dataArray = d.map((info) => info.data[0].LAeq);
-
       const dades = [];
       const valors = [];
       d.forEach((item) => {
-        let d = new Date(item.data[0].LAeq.metadata.TimeInstant.value);
+        let info = item.data[0].LAeq;
+        let d = new Date(info.metadata.TimeInstant.value);
         dades.push(d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES')),
-          valors.push(Math.floor(item.data[0].LAeq.value));
+          valors.push(Math.floor(info.value));
       });
+      console.time('options');
       graph1.setOption(
         (option1 = {
           title: {
@@ -175,21 +187,15 @@ function updateData() {
             left: '1%',
           },
           xAxis: {
-            // data: dataArray.map(function (item) {
-            //   date = new Date(item.metadata.TimeInstant.value);
-            //   return (
-            //     date.toLocaleDateString('es-ES') + ' ' + date.toLocaleTimeString('es-ES')
-            //   );
-            // }),
             data: dades,
           },
           series: {
-            // data: dataArray.map((item) => Math.floor(item.value)),
             data: valors,
           },
         })
       );
+      console.timeEnd('options');
       infoPointer.innerText = 'Mostrar més';
+      console.timeEnd('general');
     });
-  console.timeEnd('a');
 }
