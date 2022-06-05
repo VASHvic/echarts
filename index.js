@@ -5,9 +5,9 @@ const infoPointer = document.getElementById('logo-info');
 const container = document.querySelector('#pointer');
 const info1 = document.querySelector('#titol1 > p');
 
+let baseSearch = `https://sensors-soroll-api.herokuapp.com/getall/`;
 let option1;
 let chartUrls = [];
-let baseSearch = `https://sensors-soroll-api.herokuapp.com/getall/`;
 let urlDisplayed = 0;
 let dataArray = [];
 let nomCarrer = '';

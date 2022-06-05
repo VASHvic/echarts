@@ -51,20 +51,12 @@ body {
 #titol2 p {
   margin-right: 1rem;
 }
-.logo {
-  cursor: pointer;
-}
 #pointer {
   border-radius: 50%;
-  cursor: pointer;
-}
-#pointer:hover,
-.logo:hover {
-  transform: translateY(-0.1em);
 }
 #pointer:active,
 .logo:active {
-  transform: translateY(0);
+  transform: translateY(0.2em);
 }
 p#titol-centre {
   font-size: 1.3rem;
@@ -77,6 +69,7 @@ p#titol-centre {
 .logo {
   max-height: 12vh;
   max-width: 12vw;
+  cursor: pointer;
 }
 
 @media (max-width: 700px) {
