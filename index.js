@@ -1,48 +1,28 @@
-const altaveu = document.getElementById('logo-altaveu');
+const altaveuIcon = document.getElementById('logo-altaveu');
 const canvas1 = document.getElementById('container1');
 const canvas2 = document.getElementById('container2');
 const infoPointer = document.getElementById('logo-info');
-const container = document.querySelector('#pointer');
+const pointerIcon = document.querySelector('#pointer');
 const info1 = document.querySelector('#titol1 > p');
+const titolCentre = document.querySelector('#titol-centre');
 
 let baseSearch = `https://sensors-soroll-api.herokuapp.com/getall/`;
 let option1;
 let chartUrls = [];
-let urlDisplayed = 0;
 let dataArray = [];
 let nomCarrer = '';
+let urlDisplayed = 0;
 let changeView = 0;
+let resizing = false;
 
-container.addEventListener('click', (e) => {
-  if (canvas1.style.display === 'block') {
-    infoPointer.innerText = 'Carregant noves dades...';
-    ++urlDisplayed;
-    if (urlDisplayed > chartUrls.length - 1) urlDisplayed = 0;
-    updateData();
-  }
+pointerIcon.addEventListener('click', (e) => {
+  showNextInfo();
+  setChartUrl();
+  updateData();
 });
 
-altaveu.addEventListener('click', () => {
-  canvas1.style.display === 'block'
-    ? (canvas1.style.display = 'none')
-    : (canvas1.style.display = 'block');
-  canvas2.style.display === 'block'
-    ? (canvas2.style.display = 'none')
-    : (canvas2.style.display = 'block');
-  if (changeView === 0) {
-    const gaugeScript = document.createElement('script');
-    gaugeScript.src = 'gauges.js';
-    document.body.append(gaugeScript);
-    changeView = 1;
-  }
-  if (canvas1.style.display === 'none') {
-    info1.innerText = info1.innerText.toString().replace('indicador', 'gràfica');
-    altaveu.src = './assets/graph.png';
-  }
-  if (canvas2.style.display === 'none') {
-    info1.innerText = info1.innerText.toString().replace('gràfica', 'indicador');
-    altaveu.src = './assets/gauge.png';
-  }
+altaveuIcon.addEventListener('click', () => {
+  toggleScreenstate();
 });
 
 fetch('https://sensors-soroll-api.herokuapp.com/getallids')
@@ -52,7 +32,6 @@ fetch('https://sensors-soroll-api.herokuapp.com/getallids')
       .map((s) => +s.replace('NoiseLevelObserved-HOPVLCi', ''))
       .sort((a, b) => a - b);
     chartUrls = ids.map((id) => baseSearch + id);
-
     updateData();
   });
 
@@ -150,9 +129,7 @@ option1 = {
 if (option1 && typeof option1 === 'object') {
   graph1.setOption(option1);
 }
-
-window.onresize = function () {
-  let resizing = false;
+window.addEventListener('resize', () => {
   graph1.resize();
   if (resizing === false) {
     resizing = true;
@@ -161,15 +138,12 @@ window.onresize = function () {
       resizing = false;
     }, 200);
   }
-};
+});
+
 function updateData() {
-  console.time('general');
-  console.time('fetch');
   fetch(chartUrls[urlDisplayed])
     .then((d) => d.json())
     .then((d) => {
-      console.log(d.length);
-      console.timeEnd('fetch');
       nomCarrer = d[0].data[0].address.value;
       const dades = [];
       const valors = [];
@@ -179,7 +153,6 @@ function updateData() {
         dades.push(d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES')),
           valors.push(Math.floor(info.value));
       });
-      console.time('options');
       graph1.setOption(
         (option1 = {
           title: {
@@ -194,8 +167,66 @@ function updateData() {
           },
         })
       );
-      console.timeEnd('options');
-      infoPointer.innerText = 'Mostrar més';
-      console.timeEnd('general');
+      infoPointer.innerText = 'Mostrar més dades';
     });
+}
+function showNextInfo() {
+  if (canvas1.style.display === 'block') {
+    infoPointer.innerText = 'Carregant noves dades...';
+  }
+}
+function setChartUrl() {
+  ++urlDisplayed;
+  if (urlDisplayed > chartUrls.length - 1) urlDisplayed = 0;
+}
+
+function toggleScreenstate() {
+  canvas1.style.display === 'block'
+    ? (canvas1.style.display = 'none')
+    : (canvas1.style.display = 'block');
+  canvas2.style.display === 'block'
+    ? (canvas2.style.display = 'none')
+    : (canvas2.style.display = 'block');
+  if (changeView === 0) {
+    const gaugeScript = document.createElement('script');
+    gaugeScript.src = 'gauges.js';
+    document.body.append(gaugeScript);
+    changeView = 1;
+  }
+  if (canvas1.style.display === 'none') {
+    info1.innerText = info1.innerText.toString().replace('indicador', 'gràfica');
+    altaveuIcon.src = './assets/graph.png';
+
+    titolCentre.innerHTML =
+      'Nivells diaris de contaminació acústica <span>en la ciutat de Valéncia</span>';
+    setTimeout(() => {
+      chart2?.resize(),
+        chart2?.setOption({
+          title: {
+            textStyle: {
+              fontSize: autoFontSize() / 1.9,
+            },
+          },
+          series: [
+            {
+              detail: {
+                fontSize: autoFontSize(),
+              },
+            },
+            {
+              detail: {
+                fontSize: autoFontSize() / 1.3,
+              },
+            },
+          ],
+        });
+    }, 100);
+  }
+  if (canvas2.style.display === 'none') {
+    info1.innerText = info1.innerText.toString().replace('gràfica', 'indicador');
+    altaveuIcon.src = './assets/gauge.png';
+    titolCentre.innerHTML =
+      'Nivells diaris de contaminació acústica <span>en la ciutat de Valéncia</span>';
+    setTimeout(() => graph1.resize(), 100);
+  }
 }

@@ -1,5 +1,4 @@
 const chart2 = echarts.init(document.getElementById('container2'));
-const pointer = document.querySelector('#pointer');
 const gaugeUrls = chartUrls.map((url) => url.replace('all', 'one'));
 
 class Gauge {
@@ -137,9 +136,7 @@ if (option2 && typeof option2 === 'object') {
 }
 getGaugeData(gaugeUrls[gaugeDisplayed]).then((gauge) => updateGaugeData(gauge));
 
-window.onresize = function () {
-  let resizing = false;
-
+window.addEventListener('resize', () => {
   chart2.setOption({
     title: {
       textStyle: {
@@ -159,16 +156,17 @@ window.onresize = function () {
       },
     ],
   });
-
+  graph1.resize();
   chart2.resize();
   if (resizing === false) {
     resizing = true;
     setTimeout(() => {
+      graph1.resize();
       chart2.resize();
       resizing = false;
     }, 200);
   }
-};
+});
 
 function autoFontSize() {
   let width = document.getElementById('container2').offsetWidth;
@@ -216,7 +214,6 @@ async function getGaugeData(url) {
   const jsonData = await response.json();
   const [{data}] = jsonData;
   const nomCarrer = data[0].address.value;
-  console.log(nomCarrer);
   const rawDataMedicio = data[0].LAeq.metadata.TimeInstant.value;
   const dataMedicio = new Date(rawDataMedicio);
   const fecha = new Intl.DateTimeFormat('cat-ES', {
@@ -229,6 +226,5 @@ async function getGaugeData(url) {
   }).format(dataMedicio);
   const laeq = data[0].LAeq.value;
   const lae90 = data[0].LA90.value;
-  infoPointer.innerText = 'Mostrar més';
   return new Gauge({title: nomCarrer, fecha, laeq: laeq, lae90: lae90});
 }

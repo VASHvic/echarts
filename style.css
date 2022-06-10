@@ -33,7 +33,7 @@ body {
   display: flex;
   align-items: center;
   left: 2%;
-  top: 6%;
+  top: 7%;
 }
 
 #titol2 {
@@ -69,6 +69,8 @@ p#titol-centre {
 .logo {
   max-height: 12vh;
   max-width: 12vw;
+  min-height: 70px;
+  min-width: 70px;
   cursor: pointer;
 }
 
@@ -77,6 +79,14 @@ p#titol-centre {
     display: none;
   }
   #titol2 > p {
+    display: none;
+  }
+  #titol-centre > span {
+    display: none;
+  }
+}
+@media (max-width: 350px) {
+  #titol-centre {
     display: none;
   }
 }
